@@ -17,9 +17,9 @@ module.exports = {
         return new Promise((resolve, reject)=>{
 
             conn.query(`
-                SEECT * FROM tb_users WHERW email = ?
+                SELECT * FROM tb_users WHERE email = ?
             ` [
-                email
+              email
 
             ], (err, results)=>{
 
@@ -44,15 +44,11 @@ module.exports = {
 
                     }
 
-                    let row = results[0];
-
                 }
 
             })
 
-
         });
-
 
     }
 

@@ -5,20 +5,28 @@ var router = express.Router();
 router.use(function(req, res, next){
 
     if (['/login'].indexOf(req.url) === -1 && !req.session.user) {
+
         res.redirect("/admin/login");
+        
     } else {
+
         next();
+
     }
 
-    console.log("Middieware:", req.url);
+});
 
-    next();
+router.use(function(req, res, next){
+
+    req.menus = ad
 
 });
 
 router.get("/logout", function(req, res, next){
 
-    req.session.user;
+    delete req.session.user;
+
+    res.redirect("/admin/login");
 
 });
 
@@ -30,18 +38,18 @@ router.get("/", function(req, res, next){
 
 router.post("/login", function(req, res, next){
 
+
         if(!req.body.email) {
             users.render(req, res, "Preencha o campo e-mail");
-
+           
         }else if (!req.body.password){
             users.render(req, res, "preencha a senha");
-
+            
         } else {
-
+   
             users.login(req.body.email, req.body.password).then(user => {
-
+                
                 req.session.user = user;
-
                 res.redirect("/admin");
 
 
