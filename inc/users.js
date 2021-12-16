@@ -18,7 +18,7 @@ module.exports = {
 
             conn.query(`
                 SELECT * FROM tb_users WHERE email = ?
-            ` [
+            `,[
               email
 
             ], (err, results)=>{
