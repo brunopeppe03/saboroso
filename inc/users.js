@@ -7,7 +7,6 @@ module.exports = {
         res.render("admin/login", {
             body: req.body,
             error
-
         });
 
     },
@@ -24,6 +23,7 @@ module.exports = {
             ], (err, results)=>{
 
                 if(err) {
+
                     reject(err);
                 } else {
 

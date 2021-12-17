@@ -16,6 +16,7 @@ router.use(function(req, res, next){
 });
 
 
+
 router.use(function(req, res, next){
 
     req.menus = admin.getMenus(req);
@@ -54,6 +55,7 @@ router.post("/login", function(req, res, next){
 
 
         if(!req.body.email) {
+            console.log(req.body.email);
             users.render(req, res, "Preencha o campo e-mail");
            
         }else if (!req.body.password){

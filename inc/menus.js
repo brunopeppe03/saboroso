@@ -28,14 +28,14 @@ module.exports = {
 
     return new Promise((resolve, reject)=>{
 
-      fields.photo = `image/${path.parse(files.photo.path).base}`;
+      fields.photo = `images/${path.parse(files.photo.path).base}`;
 
       conn.query(`
-        ISERT INTO tb_menus (title, discription, price, photo)
+        INSERT INTO tb_menus (title, description, price, photo)
         VALUES(?, ?, ?, ?)
       `, [
         fields.title,
-        fields.discription,
+        fields.description,
         fields.price,
         fields.photo
       ],(err, results)=>{
