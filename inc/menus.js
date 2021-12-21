@@ -94,7 +94,7 @@ module.exports = {
     return new Promise((resolve, reject)=>{
 
         conn.query(`
-            DELETE FROM tb_menus WHWRE id = ?
+            DELETE FROM tb_menus WHERE id = ?
         `, [
             id
         ],(err, results)=>{
@@ -102,7 +102,7 @@ module.exports = {
           if(err) {
             reject(err);
           }else {
-            resolve(err);
+            resolve(results);
           }
 
         });
