@@ -6,15 +6,29 @@ var logger = require('morgan');
 var session = require('express-session');
 var RedisStore = require('connect-redis')(session);
 var formidable = require('formidable');
+var http = require('http');
+var socket = require('socket.io');
 var path = require('path')
 
 
-var indexRouter = require('./routes/index');
-var adminRouter = require('./routes/admin');
 
 var app = express();
 
+var http = http.Server(app);
+var io = socket(http);
+
+io.on('connection', function(socket){
+
+  console.log('usuario conectado');
+
+});
+
+var indexRouter = require('./routes/index')(io);
+var adminRouter = require('./routes/admin')(io);
+
 app.use(function(req, res, next){
+
+  req.body = {};
 
   if (req.method === 'POST') {
 
@@ -24,7 +38,8 @@ app.use(function(req, res, next){
     keepExtensions:true
   });
 
-  form.parse(req, function(err , fields, files){
+  form.parse(req, function(err, fields, files){
+
     req.body = fields;
     req.fields = fields;
     req.files = files;
@@ -33,7 +48,7 @@ app.use(function(req, res, next){
 
   });
 
-  } else {
+  }else {
 
     next();
 
@@ -41,31 +56,26 @@ app.use(function(req, res, next){
 
 });
 
-
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 app.use(session({
   store: new RedisStore({
-    host: 'localhost',
+    host:'localhost',
     port:6379
-
   }),
-  secret: 'password',
+  secret:'password',
   resave: true,
   saveUninitialized:true
 }));
 
 app.use(logger('dev'));
-app.use(express.json());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/admin', adminRouter);
-
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
@@ -82,4 +92,8 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-module.exports = app;
+http.listen(3000, function(){
+
+  console.log('servidor em execuçao');
+
+});

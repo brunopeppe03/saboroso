@@ -202,7 +202,7 @@
     <%-include("inc/footer")-%>
 
     <script src="/js/moment.min.js"></script>
-    <script src= "/admin/bower_components/chart.js/dist/Chart.min.js"></script>
+    <script src="/admin/bower_components/chart.js/dist/Chart.min.js"></script>
     <script src="/js/hcode-formsave.js"></script>
     <script src="/js/hcode-grid.js"></script>
     <script>
@@ -213,7 +213,6 @@ new HcodeGrid({
   onUpdateLoad: (form, name, data) => {
 
 let input = form.querySelector(`[name=${name}]`);
-$('#modal-update').modal('show');
 
 switch (name) {
 
@@ -258,24 +257,22 @@ let grafico = new Chart(document.querySelector("#chart").getContext("2d"),{
         }
       });
 
-      fetch(`/admin/reservation/chart${window.location.search}`)
+      fetch(`/admin/reservations/chart${window.location.search}`)
           .then(response => response.json())
-          .then(json => {
-
-            grafico.data = {
-              labels: json.months,
+          .then(json =>{
+console.log(json.months);
+            grafico.data= {
+              labels:json.months,
               datasets:[{
-            data:json.values,
+            data: json.values,
             label:'Reservas',
             backgroundColor:'rgb(54,164,235)',
-            borderColor:"rgb(54, 162, 235)",
+            borderColor:"#000",
             fill:true,
             pointBackgroundColor:'#FFF'
           }]
             };
 
-            grafico.update()
-
+            grafico.update();
           });
-
     </script>

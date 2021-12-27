@@ -6,136 +6,144 @@ var contacts = require('./../inc/contacts');
 var emails = require('./../inc/emails');
 var router = express.Router();
 
-/* GET home page. */
+
+module.exports = function(io){
+
+  /* GET home page. */
 router.get('/', function(req, res, next) {
 
-   menus.getMenus().then(results => {
+  menus.getMenus().then(results => {
 
-     res.render('index', { 
-       title: 'Restaurante Saboroso!',
-       menus: results,
-       isHome: true
+    res.render('index', { 
+      title: 'Restaurante Saboroso!',
+      menus: results,
+      isHome: true
 
-    });
+   });
 
-  });
+ });
 
 });
 
 router.get('/contacts', function(req, res, next){
 
-  contacts.render(req, res);
+ contacts.render(req, res);
 
 
 });
 
 router.post('/contacts', function(req, res, next){
 
-  if(!req.body.name) {
-    contacts.render(req, res,"digite o nome");
-  }else if (!req.body.email){
-    contacts.render(req, res,"digite o email");
-  }else if (!req.body.message){
-    contacts.render(req, res,"digite a mensagem");
-  } else {
+ if(!req.body.name) {
+   contacts.render(req, res,"digite o nome");
+ }else if (!req.body.email){
+   contacts.render(req, res,"digite o email");
+ }else if (!req.body.message){
+   contacts.render(req, res,"digite a mensagem");
+ } else {
 
-    contacts.save(req.body).then(results => {
+   contacts.save(req.body).then(results => {
 
-      req.body = {}
+     req.body = {}
+     io.emit('dashboard update');
+     contacts.render(req, res, null, "Contato enviado");
 
-      contacts.render(req, res, null, "Contato enviado");
+   }).catch(err=>{
 
-    }).catch(err=>{
+     contacts.render(req, res, err, message);
 
-      contacts.render(req, res, err, message);
+   });
 
-    });
-
-  }
-  
+ }
+ 
 });
 
 router.get('/menus', function(req, res, next) {
 
-  menus.getMenus().then(results => {
+ menus.getMenus().then(results => {
 
-    res.render('menus',{
-      title: "Menus - Reastaurante Saboroso",
-      background: 'images/img_bg_1.jpg',
-      h1: 'Saboreie nosso menu!',
-      menus: results
-  
-    });
+   res.render('menus',{
+     title: "Menus - Reastaurante Saboroso",
+     background: 'images/img_bg_1.jpg',
+     h1: 'Saboreie nosso menu!',
+     menus: results
+ 
+   });
 
-  });
+ });
 
 });
 
 router.get('/reservations', function(req, res, next) {
 
-  reservations.render(req, res);
+ reservations.render(req, res);
 
-  res.render('reservations',{
-    title: "Reservas - Reastaurante Saboroso",
-    background: 'images/img_bg_2.jpg',
-    h1: 'Reserve uma mesa!'
+ res.render('reservations',{
+   title: "Reservas - Reastaurante Saboroso",
+   background: 'images/img_bg_2.jpg',
+   h1: 'Reserve uma mesa!'
 
-  });
+ });
 
 });
 
 router.post('/reservations', function(req, res, next) {
 
-  if(!req.body.name) {
-    reservations.render(req, res,"digite o nome");
-  }else if (!req.body.email){
-    reservations.render(req, res,"digite o email");
-  }else if (!req.body.people){
-    reservations.render(req, res,"indique o numero de pessoas");
-  }else if (!req.body.date){
-    reservations.render(req, res,"selecione o dia");
-  }else if (!req.body.time){
-    reservations.render(req, res,"selecione o horario");
+ if(!req.body.name) {
+   reservations.render(req, res,"digite o nome");
+ }else if (!req.body.email){
+   reservations.render(req, res,"digite o email");
+ }else if (!req.body.people){
+   reservations.render(req, res,"indique o numero de pessoas");
+ }else if (!req.body.date){
+   reservations.render(req, res,"selecione o dia");
+ }else if (!req.body.time){
+   reservations.render(req, res,"selecione o horario");
 
-  }else {
+ }else {
 
-    reservations.save(req.body).then(results => {
+   reservations.save(req.body).then(results => {
 
-      reservations.render(req, res, null, "reserva feita");
+    req.body = {};
 
-    }).catch(err=>{
-      reservations.render(req, res, err.message);
+    io.emit('dashboard update');
+
+     reservations.render(req, res, null, "reserva feita");
+
+   }).catch(err=>{
+     reservations.render(req, res, err.message);
 
 
-    });
+   });
 
-  }
- 
+ }
+
 
 });
 
 router.get('/services', function(req, res, next) {
 
-  res.render('services',{
-    title: "Servisos - Reastaurante Saboroso",
-    background: 'images/img_bg_1.jpg',
-    h1: 'E um prazer poder servir!'
+ res.render('services',{
+   title: "Servisos - Reastaurante Saboroso",
+   background: 'images/img_bg_1.jpg',
+   h1: 'E um prazer poder servir!'
 
-  });
+ });
 
 });
 
 router.post("/subscribe", function(req,res,next){
 
-  emails.save(req).then(results=>{
+ emails.save(req).then(results=>{
 
-    res.send(results)
+   res.send(results)
 
-  }).catch(err=>{
-      res.send(err);
-  })
+ }).catch(err=>{
+     res.send(err);
+ })
 
 });
 
+  return router
 
-module.exports = router;
+};
